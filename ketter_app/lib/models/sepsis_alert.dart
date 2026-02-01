@@ -19,8 +19,8 @@ class SepsisAlert with _$SepsisAlert {
   /// Converts the SepsisAlert to a FHIR Communication resource.
   Communication toFhirCommunication(Reference subject) {
     return Communication(
-      id: Id(id),
-      status: CommunicationStatus.completed,
+      fhirId: id,
+      status: FhirCode('completed'),
       category: [
         CodeableConcept(coding: [
           Coding(

@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ketter_app/services/ews_service.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Local Notifications
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
   runApp(const KetterApp());
 }
 
