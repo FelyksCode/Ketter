@@ -14,7 +14,7 @@ class SepsisAlert with _$SepsisAlert {
     required List<String> triggeredParameters,
   }) = _SepsisAlert;
 
-  factory SepsisAlert.fromJson(Map<String, dynamic> json) => _$SepsisAlert.fromJson(json);
+  factory SepsisAlert.fromJson(Map<String, dynamic> json) => _$SepsisAlertFromJson(json);
 
   /// Converts the SepsisAlert to a FHIR Communication resource.
   Communication toFhirCommunication(Reference subject) {
@@ -25,7 +25,7 @@ class SepsisAlert with _$SepsisAlert {
         CodeableConcept(coding: [
           Coding(
             system: FhirUri('http://terminology.hl7.org/CodeSystem/communication-category'),
-            code: Code('alert'),
+            code: FhirCode('alert'),
             display: 'Alert',
           )
         ])

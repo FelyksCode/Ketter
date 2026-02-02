@@ -11,7 +11,8 @@ class KetterPatient {
     return '${name.given?.join(" ")} ${name.family}';
   }
 
-  String get id => fhirPatient.id?.toString() ?? 'unknown';
+  String get id => fhirPatient.fhirId?.toString() ?? 'unknown';
+
 
   static KetterPatient fromFhir(Patient patient) => KetterPatient(patient);
 }
