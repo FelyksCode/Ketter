@@ -5,7 +5,7 @@ import 'package:fhir/r4.dart';
 class EWSService {
   /// Calculates the NEWS2 score based on a list of FHIR Observations.
   /// Parameters expected:
-  /// - Respiration Rate (8867-4)
+  /// - Respiration Rate (9279-1)
   /// - SpO2 (2708-6)
   /// - Supplemental Oxygen (set if applicable)
   /// - Systolic BP (8480-6)

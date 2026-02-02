@@ -49,6 +49,18 @@ The backend is a Spring Boot application using HAPI FHIR, located in `ketter_bac
    ```
 The FHIR server will be available at `http://localhost:8080/fhir/`.
 
+### Running with Docker
+You can also run the backend using Docker:
+1. Build the image:
+   ```bash
+   cd ketter_backend
+   docker build -t ketter-backend .
+   ```
+2. Run the container:
+   ```bash
+   docker run -p 8080:8080 ketter-backend
+   ```
+
 ## 3. Ketter AI (Data Simulation)
 The AI simulation scripts are located in `ketter_ai`.
 
