@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'tflite_engine.dart';
 
 /// Interface for AI inference.
 abstract class InferenceEngine {
@@ -35,7 +36,7 @@ class EdgeAIService {
   final List<double> _means = [83.24, 96.85, 37.09, 117.49, 89.89, 76.08, 17.00, 39.18];
   final List<double> _scales = [10.77, 2.04, 0.57, 8.96, 6.31, 6.28, 2.97, 2.60];
 
-  EdgeAIService({InferenceEngine? engine}) : _engine = engine ?? MockInferenceEngine();
+  EdgeAIService({InferenceEngine? engine}) : _engine = engine ?? TfliteIsolateEngine();
 
   Future<void> initModel() async {
     if (_isModelLoaded) return;
