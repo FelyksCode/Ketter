@@ -1,0 +1,30 @@
+/app/ketter_ai/research_train.py:108: FutureWarning:
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x='Importance', y='Feature', data=feat_df, palette='viridis')
+Starting Research Sepsis Model Pipeline...
+--- Validation Metrics ---
+Confusion Matrix:
+[[197   0]
+ [  0 203]]
+Accuracy: 1.0000
+Sensitivity (Recall): 1.0000 (CRITICAL)
+Specificity: 1.0000
+F1-Score: 1.0000
+
+Classification Report:
+               precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00       197
+           1       1.00      1.00      1.00       203
+
+    accuracy                           1.00       400
+   macro avg       1.00      1.00      1.00       400
+weighted avg       1.00      1.00      1.00       400
+
+--- Export ---
+Native Dart model saved to ketter_ai/sepsis_model.dart
+--- Visualization ---
+Feature importance plot saved to ketter_ai/feature_importance.png
+Pipeline Complete.
