@@ -1,79 +1,76 @@
 import 'dart:isolate';
+import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'edge_ai_service.dart';
 
 /// Implementation of [InferenceEngine] that uses TFLite and runs in an Isolate.
 class TfliteIsolateEngine implements InferenceEngine {
-  Interpreter? _interpreter;
   String? _modelPath;
 
   @override
   Future<void> loadModel(String assetPath) async {
     _modelPath = assetPath;
-    _interpreter = await Interpreter.fromAsset(assetPath);
-    print('TFLite Model loaded from assets: $assetPath');
+    // Just verify the asset exists or can be loaded in main isolate if needed
+    print('TFLite Model path set: $assetPath');
   }
 
   @override
   Future<double> performInference(List<double> input) async {
-    if (_interpreter == null) {
-      throw Exception('Interpreter not initialized. Call loadModel first.');
+    if (_modelPath == null) {
+      throw Exception('Model path not set. Call loadModel first.');
     }
 
-    // We use a ReceivePort to get the result back from the isolate
+    final RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
     final receivePort = ReceivePort();
 
-    // Start the isolate
     await Isolate.spawn(
       _inferenceTask,
       _InferenceData(
         modelPath: _modelPath!,
         input: input,
         sendPort: receivePort.sendPort,
+        token: rootIsolateToken,
       ),
     );
 
-    // Wait for the result
     return await receivePort.first as double;
   }
 
-  /// The static task that runs inside the Isolate.
-  /// Note: We re-load or share the interpreter logic here.
-  /// In high-performance apps, we'd keep the isolate alive.
   static void _inferenceTask(_InferenceData data) async {
     try {
-      // Re-initialize interpreter in the new isolate
-      // (Isolates don't share memory/objects easily)
+      // Required for using plugins/assets in background isolates
+      BackgroundIsolateBinaryMessenger.ensureInitialized(data.token);
+
       final interpreter = await Interpreter.fromAsset(data.modelPath);
 
-      // Prepare input/output tensors
-      // Input shape: [1, 8]
-      var input = data.input.reshape([1, 8]);
-      // Output shape: [1, 1]
-      var output = List<double>.filled(1, 0).reshape([1, 1]);
+      // Prepare input/output
+      // Note: reshape is available as an extension in tflite_flutter
+      var inputTensor = [data.input];
+      var outputTensor = List<double>.filled(1, 0).reshape([1, 1]);
 
-      interpreter.run(input, output);
+      interpreter.run(inputTensor, outputTensor);
 
-      final result = output[0][0] as double;
+      final result = outputTensor[0][0] as double;
       data.sendPort.send(result);
 
       interpreter.close();
     } catch (e) {
       print('Isolate inference error: $e');
-      data.sendPort.send(0.0); // Fallback
+      data.sendPort.send(0.0);
     }
   }
 }
 
-/// Helper class to pass data to the isolate.
 class _InferenceData {
   final String modelPath;
   final List<double> input;
   final SendPort sendPort;
+  final RootIsolateToken token;
 
   _InferenceData({
     required this.modelPath,
     required this.input,
     required this.sendPort,
+    required this.token,
   });
 }
