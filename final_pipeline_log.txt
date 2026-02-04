@@ -1,0 +1,51 @@
+Loading Kaggle datasets...
+Detected 1000 sepsis records. Balancing classes...
+Performing feature injection...
+Merging datasets...
+Ground truth dataset saved to ketter_ai/ground_truth_dataset.csv
+Training Random Forest model...
+
+--- Clinical Metrics Report ---
+Confusion Matrix:
+[[203   0]
+ [  0 197]]
+
+Classification Report (Focus on Recall/Sensitivity):
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00       203
+           1       1.00      1.00      1.00       197
+
+    accuracy                           1.00       400
+   macro avg       1.00      1.00      1.00       400
+weighted avg       1.00      1.00      1.00       400
+
+
+Model saved to ketter_ai/sepsis_model.pkl
+
+--- Decision Logic Function ---
+
+def predict_sepsis_risk(hr, temp, steps, user_score):
+    """
+    Clinical Decision Logic for Sepsis Alerting.
+    Input Features:
+    - hr: Heart Rate (bpm)
+    - temp: Temperature (Celsius)
+    - steps: Steps count
+    - user_score: ePRO (0-3 scale)
+    """
+    import joblib
+    import numpy as np
+
+    # Load model
+    model = joblib.load('sepsis_model.pkl')
+
+    # Inference
+    data = np.array([[hr, temp, steps, user_score]])
+    prediction = model.predict(data)[0]
+    probability = model.predict_proba(data)[0][1]
+
+    return {
+        'risk_detected': bool(prediction == 1),
+        'confidence': float(probability)
+    }
